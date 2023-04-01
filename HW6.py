@@ -138,16 +138,31 @@ def get_starships(filename):
     # return starships_dict
     
     starships_dict = {}
-    cache_dict = load_json(filename)
-    for page_data in cache_dict.values():
-        for person in page_data['results']:
-            starships = []
-            for starship_url in person['starships']:
-                starship_data = get_swapi_info(starship_url)
-                if starship_data is not None:
-                    starships.append(starship_data['name'])
-            starships_dict[person['name']] = starships
+    file = load_json(filename)
+    for page_number, result in file.items():
+        for person in result:
+            person_name = person["name"]
+            starships_urls = person.get('starships', [])
+            starship_name = []
+            for starships_url in starships_urls:
+                starships_result = get_swapi_info(starships_url)
+                if starships_result != None:
+                    starship_name.append(starships_result["name"])
+            if len(starship_name) != 0:
+                starships_dict[person_name] = starship_name
     return starships_dict
+                     
+    
+    
+    # for page_data in cache_dict.values():
+    #     for person in page_data['results']:
+    #         starships = []
+    #         for starship_url in person['starships']:
+    #             starship_data = get_swapi_info(starship_url)
+    #             if starship_data is not None:
+    #                 starships.append(starship_data['name'])
+    #         starships_dict[person['name']] = starships
+    # return starships_dict
     
 
 
