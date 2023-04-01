@@ -89,31 +89,20 @@ def cache_all_pages(people_url, filename):
     filename(str): the name of the file to write a cache to
         
     '''
-    # file = load_json(filename)
-    # response = requests.get(people_url)
-    # response_data = response.json()
-    # total_pages = response_data['count'] // len(response_data['results']) + 1
+    cache_data = load_json(filename)
+    page_number = 1
+  
+    while people_url is not None:
+        if page_number not in cache_data:
+            data = get_swapi_info(people_url)
+            if data is not None:
+                results = data.get('results', [])
+                cache_data[f"page {page_number}"] = results
+                write_json(filename, cache_data)
+        
+        page_number += 1
+        people_url = data.get('next')
     
-    # if 
-    
-    
-    
-    cache_dict = load_json(filename)
-    page_num = 1
-    while True:
-        if page_num in cache_dict:
-            page_num += 1
-            continue
-        data = get_swapi_info(people_url, params={'page': page_num})
-        if data is None:
-            break
-        cache_dict[page_num] = data
-        page_num += 1
-    write_json(filename, cache_dict)
-    
-    
-
- 
   
 
 def get_starships(filename):
@@ -193,3 +182,5 @@ if __name__ == "__main__":
     unittest.main(verbosity=2)
 
     
+
+
