@@ -117,25 +117,6 @@ def get_starships(filename):
     dict: dictionary with the character's name as a key and a list of the name their 
     starships as the value
     '''
-
-    # data = load_json(filename)
-    # starships_dict = {}
-
-    # # Iterate over cached data to get starship data for each character
-    # for page_num, page_data in data.items():
-
-    #     for character in page_data:
-    #         name = character['name']
-    #         starships_urls = character.get('starships', [])
-    #         starships_names = []
-    #         for starship_url in starships_urls:
-    #             starship_data = get_swapi_info(starship_url)
-    #             if starship_data:
-    #                 starships_names.append(starship_data['name'])
-    #         if len(starships_names) != 0: 
-    #             starships_dict[name] = starships_names
-
-    # return starships_dict
     
     starships_dict = {}
     file = load_json(filename)
@@ -171,7 +152,25 @@ def calculate_bmi(filename):
     dict: dictionary with the name as a key and the BMI as the value
     '''
 
-    pass
+    file = load_json(filename)
+    bmi_dict = {}
+    for page, result in file.items():
+        for character in result:
+            name = character["name"]
+            height = character["height"].replace(',', '')
+            mass = character["mass"].replace(',', '')
+            if height == "unknown" or mass == "unknown":
+                continue
+            height = float(height)
+            mass = float(mass)
+            bmi = (mass / (height / 100) ** 2)
+            bmi_dict[name] = round(bmi,2)
+
+    return bmi_dict
+
+
+
+
 
 class TestHomework6(unittest.TestCase):
     def setUp(self):
@@ -203,10 +202,10 @@ class TestHomework6(unittest.TestCase):
         self.assertEqual(type(starships["Luke Skywalker"]), list)
         self.assertEqual(starships['Biggs Darklighter'][0], 'X-wing')
 
-    # def test_calculate_bmi(self):
-    #     bmi = calculate_bmi(self.filename)
-    #     self.assertEqual(len(bmi), 59)
-    #     self.assertAlmostEqual(bmi['Greedo'], 24.73)
+    def test_calculate_bmi(self):
+        bmi = calculate_bmi(self.filename)
+        self.assertEqual(len(bmi), 59)
+        self.assertAlmostEqual(bmi['Greedo'], 24.73)
     
 if __name__ == "__main__":
     unittest.main(verbosity=2)
