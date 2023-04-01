@@ -163,7 +163,7 @@ def calculate_bmi(filename):
                 continue
             height = float(height)
             mass = float(mass)
-            bmi = (mass / (height / 100) ** 2)
+            bmi = (mass /height**2 )*10000
             bmi_dict[name] = round(bmi,2)
 
     return bmi_dict
