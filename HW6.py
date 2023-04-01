@@ -24,7 +24,7 @@ def load_json(filename):
         if the cache does not exist, an empty dict
     '''
     if os.path.exists(filename):
-        with open(filename, 'r') as f:
+        with open(filename, "r") as f:
             return json.load(f)
     else:
         return {}   
@@ -47,7 +47,7 @@ def write_json(filename, dict):
     None
         does not return anything
     '''  
-    with open(filename, 'w') as file:
+    with open(filename, "w") as file:
         json.dump(dict, file)
 
 
@@ -89,20 +89,18 @@ def cache_all_pages(people_url, filename):
     filename(str): the name of the file to write a cache to
         
     '''
-    cache_data = load_json(filename)
+    file = load_json(filename)
     page_number = 1
-  
-    while people_url is not None:
-        if page_number not in cache_data:
+    while people_url != None:
+        if page_number not in file:
             data = get_swapi_info(people_url)
-            if data is not None:
-                results = data.get('results', [])
-                cache_data[f"page {page_number}"] = results
-                write_json(filename, cache_data)
-        
+            if data != None:
+                results = data.get("results", [])
+                file[f"page {page_number}"] = results
+                write_json(filename, file)    
         page_number += 1
-        people_url = data.get('next')
-    
+        people_url = data.get("next")
+
   
 
 def get_starships(filename):
@@ -120,7 +118,38 @@ def get_starships(filename):
     starships as the value
     '''
 
-    pass
+    # data = load_json(filename)
+    # starships_dict = {}
+
+    # # Iterate over cached data to get starship data for each character
+    # for page_num, page_data in data.items():
+
+    #     for character in page_data:
+    #         name = character['name']
+    #         starships_urls = character.get('starships', [])
+    #         starships_names = []
+    #         for starship_url in starships_urls:
+    #             starship_data = get_swapi_info(starship_url)
+    #             if starship_data:
+    #                 starships_names.append(starship_data['name'])
+    #         if len(starships_names) != 0: 
+    #             starships_dict[name] = starships_names
+
+    # return starships_dict
+    
+    starships_dict = {}
+    cache_dict = load_json(filename)
+    for page_data in cache_dict.values():
+        for person in page_data['results']:
+            starships = []
+            for starship_url in person['starships']:
+                starship_data = get_swapi_info(starship_url)
+                if starship_data is not None:
+                    starships.append(starship_data['name'])
+            starships_dict[person['name']] = starships
+    return starships_dict
+    
+
 
 #################### EXTRA CREDIT ######################
 
@@ -167,11 +196,11 @@ class TestHomework6(unittest.TestCase):
         swapi_people = load_json(self.filename)
         self.assertEqual(type(swapi_people['page 1']), list)
 
-    # def test_get_starships(self):
-    #     starships = get_starships(self.filename)
-    #     self.assertEqual(len(starships), 19)
-    #     self.assertEqual(type(starships["Luke Skywalker"]), list)
-    #     self.assertEqual(starships['Biggs Darklighter'][0], 'X-wing')
+    def test_get_starships(self):
+        starships = get_starships(self.filename)
+        self.assertEqual(len(starships), 19)
+        self.assertEqual(type(starships["Luke Skywalker"]), list)
+        self.assertEqual(starships['Biggs Darklighter'][0], 'X-wing')
 
     # def test_calculate_bmi(self):
     #     bmi = calculate_bmi(self.filename)
