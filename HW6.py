@@ -152,20 +152,6 @@ def get_starships(filename):
                 starships_dict[person_name] = starship_name
     return starships_dict
                      
-    
-    
-    # for page_data in cache_dict.values():
-    #     for person in page_data['results']:
-    #         starships = []
-    #         for starship_url in person['starships']:
-    #             starship_data = get_swapi_info(starship_url)
-    #             if starship_data is not None:
-    #                 starships.append(starship_data['name'])
-    #         starships_dict[person['name']] = starships
-    # return starships_dict
-    
-
-
 #################### EXTRA CREDIT ######################
 
 def calculate_bmi(filename):
